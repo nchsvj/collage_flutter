@@ -23,7 +23,19 @@ class Title extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(
+      width: 100,
+      height: 100,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+        color: switch (hitType) {
+          HitType.hit => Colors.green,
+          HitType.miss => Colors.grey,
+          HitType.partial => Colors.yellow,
+          _ => Colors.white,
+        },
+      ),
+      child: Center(child: Text(letter.toUpperCase())),
+    );
   }
 }
-
