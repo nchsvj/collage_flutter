@@ -144,7 +144,7 @@ class Word with IterableMixin<Letter> {
   bool get isNotEmpty => !isEmpty;
 
   Letter operator [](int i) => _letters[i];
-  operator []=(int i, Letter value) => _letters[i] = value;
+  void operator []=(int i, Letter value) => _letters[i] = value;
 
   @override
   String toString() {
