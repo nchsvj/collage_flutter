@@ -46,7 +46,7 @@ class GamePage extends StatelessWidget {
             children: [for (final letter in guess) Title(letter.char, letter.type)]
           ),
           GuessInput(onSubmitGuess: (text) {
-            print("Тест");
+            print("ИИСУС: $text");
           })
         ]
       ),
@@ -57,6 +57,7 @@ class GamePage extends StatelessWidget {
 class GuessInput extends StatelessWidget {
   final Function(String) onSubmitGuess;
   final TextEditingController _textEditingController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   GuessInput({super.key, required this.onSubmitGuess});
 
   @override
@@ -68,12 +69,28 @@ class GuessInput extends StatelessWidget {
             padding: EdgeInsets.all(8.0),
             child: TextField(
               maxLength: 5, 
-              decoration: InputDecoration(labelText: "Enter your guess", border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(8.0)))),
+              decoration: InputDecoration(labelText: "Enter your guess", 
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0))
+                  )
+                ),
+              controller: _textEditingController,
               onSubmitted: (input) {
-                print(_textEditingController.text);
+                _textEditingController.clear();
+                _focusNode.requestFocus();
               },
+              focusNode: _focusNode,
             ),
           ),
+        ),
+        IconButton(
+          padding: EdgeInsets.all(8.0),
+          icon: Icon(Icons.arrow_circle_up),
+          onPressed: () {
+            onSubmitGuess(_textEditingController.text.trim());
+            _textEditingController.clear();
+            _focusNode.requestFocus();
+          },
         ),
       ],
     );
