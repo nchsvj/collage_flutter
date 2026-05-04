@@ -5,16 +5,18 @@ void main() {
   runApp(const MainApp());
 }
 
-class Title extends StatelessWidget {
-  const Title(this.letter, this.hitType, {super.key});
+class Tile extends StatelessWidget {
+  const Tile(this.letter, this.hitType, {super.key});
   final String letter;
   final HitType hitType;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
       width: 60,
       height: 60,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.bounceIn,
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey.shade300),
         color: switch (hitType) {
@@ -29,9 +31,14 @@ class Title extends StatelessWidget {
   }
 }
 
-class GamePage extends StatelessWidget {
+class GamePage extends StatefulWidget {
   GamePage({super.key});
 
+  @override
+  State<GamePage> createState() => _GamePageState();
+}
+
+class _GamePageState extends State<GamePage> {
   final Game _game = Game();
 
   @override
@@ -43,10 +50,12 @@ class GamePage extends StatelessWidget {
         children: [for (final guess in _game.guesses) 
           Row(
             spacing: 5.0,
-            children: [for (final letter in guess) Title(letter.char, letter.type)]
+            children: [for (final letter in guess) Tile(letter.char, letter.type)]
           ),
-          GuessInput(onSubmitGuess: (text) {
-            print("ИИСУС: $text");
+          GuessInput(onSubmitGuess: (guess) {
+            setState(() {
+              _game.guess(guess);
+            });
           })
         ]
       ),
@@ -56,8 +65,8 @@ class GamePage extends StatelessWidget {
 
 class GuessInput extends StatelessWidget {
   final Function(String) onSubmitGuess;
-  final TextEditingController _textEditingController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
+  final TextEditingController _controller = TextEditingController();
+  final FocusNode _focus = FocusNode();
   GuessInput({super.key, required this.onSubmitGuess});
 
   @override
@@ -74,12 +83,12 @@ class GuessInput extends StatelessWidget {
                   borderRadius: BorderRadius.all(Radius.circular(8.0))
                   )
                 ),
-              controller: _textEditingController,
+              controller: _controller,
               onSubmitted: (input) {
-                _textEditingController.clear();
-                _focusNode.requestFocus();
+                _controller.clear();
+                _focus.requestFocus();
               },
-              focusNode: _focusNode,
+              focusNode: _focus,
             ),
           ),
         ),
@@ -87,9 +96,9 @@ class GuessInput extends StatelessWidget {
           padding: EdgeInsets.all(8.0),
           icon: Icon(Icons.arrow_circle_up),
           onPressed: () {
-            onSubmitGuess(_textEditingController.text.trim());
-            _textEditingController.clear();
-            _focusNode.requestFocus();
+            onSubmitGuess(_controller.text.trim());
+            _controller.clear();
+            _focus.requestFocus();
           },
         ),
       ],
